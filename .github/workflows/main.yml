@@ -1,25 +1,28 @@
-name: Output
-run-name: Exxemplo workflow para output, executado por ${{ github.actor }}
-on:
-    workflow_dispatch:
+name: Output Test
+run-name: Exemplo de Output
+on: workflow_dispatch
 jobs:
-    gerando_output:
+    input:
         runs-on: ubuntu-latest
         outputs:
-          shell: ${{ steps.exemplo.outputs.action_random }}
+            hello: ${{ steps.hello.outputs.first }}
+            world: ${{ steps.world.outputs.second }}
         steps:
-            - name: Gerando output com shell
-              id: exemplo
+            - name: Super Mario
+              id: hello
               run: |
-                ACTION_RANDOM=$(( $RANDOM ))
-                echo "action_random=$ACTION_RANDOM" >> $GITHUB_OUTPUT
-            - name: Exibindo o output da action
-              run: echo "${{ steps.exemplo.outputs.action_random }}"
-    exibindo-valores:
-        needs: 
-            - gerando_output
+                  echo "first=Super Mario" >> "$GITHUB_OUTPUT"
+            - name: World
+              id: world
+              run: |
+                  echo "second=World" >> "$GITHUB_OUTPUT"
+    output:
+        needs:
+            - input
         runs-on: ubuntu-latest
         steps:
-          - name: Exibindo os outputs do gerando_output
-            run: |
-                echo "Output Shell: ${{ needs.gerando_output.outputs.shell }}
+            - name: Resultado
+              env:
+                  hello: ${{ needs.input.outputs.hello }}
+                  world: ${{ needs.input.outputs.world }}
+              run: echo "$hello $world"
