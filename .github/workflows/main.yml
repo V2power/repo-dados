@@ -21,7 +21,7 @@ jobs:
                 path: ./artifacts
             - name: Endereço dos artefatos
               run: |
-                  echo "${{ steps.upload.outputs.artifact-url }}
+                  echo "${{ steps.upload.outputs.artifact-url }}"
     download:
         runs-on: ubuntu-latest
         needs:
