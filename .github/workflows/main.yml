@@ -5,11 +5,21 @@ on:
 jobs:
     gerando_output:
         runs-on: ubuntu-latest
+        outputs:
+          shell: ${{ steps.exemplo.outputs.action_random }}
         steps:
             - name: Gerando output com shell
-              id: exemplo-output
+              id: exemplo
               run: |
                 ACTION_RANDOM=$(( $RANDOM ))
                 echo "action_random=$ACTION_RANDOM" >> $GITHUB_OUTPUT
             - name: Exibindo o output da action
-              run: echo "${{ steps.exemplo-output.outputs.action_random }}"
+              run: echo "${{ steps.exemplo.outputs.action_random }}"
+    exibindo-valores:
+        needs: 
+            - gerando_output
+        runs-on: ubuntu-latest
+        steps:
+          - name: Exibindo os outputs do gerando_output
+            run: |
+                echo "Output Shell: ${{ needs.gerando_output.outputs.shell }}
