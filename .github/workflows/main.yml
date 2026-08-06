@@ -1,28 +1,37 @@
-name: Output Test
-run-name: Exemplo de Output
+name: Artifact Test
+run-name: Exemplo de Artifact
 on: workflow_dispatch
+env:
+  artifact: arquivo
 jobs:
-    input:
+    artifact:
         runs-on: ubuntu-latest
-        outputs:
-            hello: ${{ steps.hello.outputs.first }}
-            world: ${{ steps.world.outputs.second }}
         steps:
-            - name: Super Mario
-              id: hello
+            - name: Listagem de arquivos
+              run: ls
+            - name: Gerar alguns arquivos
               run: |
-                  echo "first=Super Mario" >> "$GITHUB_OUTPUT"
-            - name: World
-              id: world
+                  mkdir artifacts
+                  echo "Arquivo de teste" > ./artifacts/test.txt
+            - name: Upload a Build Artifact
+              id: upload
+              uses: actions/upload-artifact@v7.0.1
+              with:
+                name: ${{ env.artifact }}
+                path: ./artifacts
+            - name: Endereço dos artefatos
               run: |
-                  echo "second=World" >> "$GITHUB_OUTPUT"
-    output:
+                  echo "${{ steps.upload.outputs.artifact-url }}
+    download:
+        runs-on: ubuntu-latest
         needs:
-            - input
-        runs-on: ubuntu-latest
+          - artifact
         steps:
-            - name: Resultado
-              env:
-                  hello: ${{ needs.input.outputs.hello }}
-                  world: ${{ needs.input.outputs.world }}
-              run: echo "$hello $world"
+          - name: Listagem de arquivos
+            run: ls
+          - name: Download Artifact
+            uses: actions/download-artifact@v8
+            with:
+                name: ${{ env.artifact }}
+          - name: Display structure of downloaded files
+            run: ls -R
